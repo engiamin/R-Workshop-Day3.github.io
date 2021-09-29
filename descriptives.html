@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Visualizations and Summary Statistics</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Day 3</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Exploratory Data Analysis</a>
+</li>
+<li>
+  <a href="descriptives.html">Visualizations and Summary Statistics</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Visualizations and Summary Statistics</h1>
+
+</div>
+
+
+<style type="text/css">
+code.r{
+  font-size: 16px;
+}
+pre {
+  font-size: 16px
+}
+</style>
+<pre class="r"><code># Load needed packages
+library(openxlsx)
+library(tidyverse)</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Read Data
+data &lt;- read.xlsx(&quot;Long Data.xlsx&quot;,1)</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<div id="overall-summary-of-data" class="section level1">
+<h1>Overall Summary of Data</h1>
+<pre class="r"><code># Show the dimensions of the data frame by row and column
+dim(data)</code></pre>
+<pre><code>## [1] 960  29</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Show the structure of the dataframe
+str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    960 obs. of  29 variables:
+##  $ Date              : num  43289 43289 43289 43289 43289 ...
+##  $ Session           : num  1 1 1 1 1 1 1 1 1 1 ...
+##  $ Subject.ID        : num  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Group             : num  1 1 1 1 2 2 2 2 3 3 ...
+##  $ Scenario1         : chr  &quot;X&quot; &quot;X&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Scenario2         : chr  &quot;Y&quot; &quot;X&quot; &quot;Y&quot; &quot;Y&quot; ...
+##  $ Scenario3         : chr  &quot;Y&quot; &quot;Y&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Scenario4         : chr  &quot;X&quot; &quot;Y&quot; &quot;Y&quot; &quot;X&quot; ...
+##  $ Scenario5         : chr  &quot;Y&quot; &quot;Y&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Scenario6         : chr  &quot;Y&quot; &quot;Y&quot; &quot;X&quot; &quot;X&quot; ...
+##  $ Scenario7         : chr  &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; &quot;X&quot; ...
+##  $ Scenario8         : chr  &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; &quot;X&quot; ...
+##  $ Treatment         : chr  &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; ...
+##  $ Gender            : chr  &quot;Male&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
+##  $ Age               : num  21 20 22 20 23 22 22 21 21 21 ...
+##  $ Religion          : chr  &quot;Muslim&quot; &quot;Muslim&quot; &quot;Christian&quot; &quot;Muslim&quot; ...
+##  $ Residence         : num  2 2 2 2 2 2 2 2 2 2 ...
+##  $ Profit            : num  53.1 52.6 50.6 48.6 52.4 ...
+##  $ FinancialStatus   : chr  &quot;Medium&quot; &quot;High&quot; &quot;Medium&quot; &quot;Medium&quot; ...
+##  $ ID                : chr  &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $ Group_ID          : chr  &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;1&quot; ...
+##  $ Period            : chr  &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;1&quot; ...
+##  $ Contribution      : num  0 0 0 10 8 0 2 5 5 0 ...
+##  $ ReceivePride      : chr  NA NA NA NA ...
+##  $ SubTotal          : num  24 24 24 14 18 26 24 21 20.6 25.6 ...
+##  $ ProfitGroupAccount: num  4 4 4 4 6 6 6 6 5.6 5.6 ...
+##  $ GroupContribution : num  10 10 10 10 15 15 15 15 14 14 ...
+##  $ Rank              : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ id                : num  1 2 3 4 5 6 7 8 9 10 ...</code></pre>
+<pre class="r"><code># Transforming Data has converted some factor variables into characters!</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Some quick fixes from the tidying step
+
+Convert_to_factor &lt;- c(&quot;ID&quot;,&quot;Group_ID&quot;,&quot;Religion&quot;,&quot;Gender&quot;,&quot;Treatment&quot;,&quot;Residence&quot;,&quot;FinancialStatus&quot;, &quot;ReceivePride&quot;, &quot;Period&quot;)
+
+scenarios &lt;- grep(&quot;Scenario&quot;,names(data))
+
+data[,Convert_to_factor] &lt;- lapply(data[,Convert_to_factor], factor)
+
+data[,scenarios] &lt;- lapply(data[,scenarios], factor)</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Show summary statistics on the columns of the data frame
+summary(data)</code></pre>
+<pre><code>##       Date          Session      Subject.ID        Group       Scenario1
+##  Min.   :43289   Min.   :1.0   Min.   : 1.00   Min.   : 1.00   X:560    
+##  1st Qu.:43289   1st Qu.:1.0   1st Qu.:12.75   1st Qu.: 3.75   Y:400    
+##  Median :43290   Median :1.5   Median :24.50   Median : 6.50            
+##  Mean   :43290   Mean   :1.5   Mean   :24.50   Mean   : 6.50            
+##  3rd Qu.:43290   3rd Qu.:2.0   3rd Qu.:36.25   3rd Qu.: 9.25            
+##  Max.   :43290   Max.   :2.0   Max.   :48.00   Max.   :12.00            
+##                                                                         
+##  Scenario2 Scenario3 Scenario4 Scenario5 Scenario6 Scenario7 Scenario8
+##  X:490     X:520     X:460     X:600     X:580     X:520     X:410    
+##  Y:470     Y:440     Y:500     Y:360     Y:380     Y:440     Y:550    
+##                                                                       
+##                                                                       
+##                                                                       
+##                                                                       
+##                                                                       
+##    Treatment      Gender         Age             Religion   Residence
+##  Control:480   Female:740   Min.   :18.00   Christian: 40   1: 60    
+##  Pride  :480   Male  :220   1st Qu.:21.00   Muslim   :920   2:900    
+##                             Median :21.00                            
+##                             Mean   :21.27                            
+##                             3rd Qu.:22.00                            
+##                             Max.   :26.00                            
+##                                                                      
+##      Profit      FinancialStatus       ID         Group_ID       Period   
+##  Min.   :25.00   High  :430      1      : 10   1      : 40   1      : 96  
+##  1st Qu.:50.61   Low   : 70      10     : 10   10     : 40   10     : 96  
+##  Median :54.00   Medium:460      11     : 10   11     : 40   2      : 96  
+##  Mean   :53.31                   12     : 10   12     : 40   3      : 96  
+##  3rd Qu.:58.00                   13     : 10   13     : 40   4      : 96  
+##  Max.   :78.00                   14     : 10   14     : 40   5      : 96  
+##                                  (Other):900   (Other):720   (Other):384  
+##   Contribution    ReceivePride    SubTotal     ProfitGroupAccount
+##  Min.   : 0.000   N   :275     Min.   : 8.80   Min.   : 0.000    
+##  1st Qu.: 0.000   Y   :201     1st Qu.:20.00   1st Qu.: 1.200    
+##  Median : 1.000   NA&#39;s:484     Median :21.20   Median : 4.000    
+##  Mean   : 3.486                Mean   :22.08   Mean   : 5.549    
+##  3rd Qu.: 5.000                3rd Qu.:24.00   3rd Qu.: 8.000    
+##  Max.   :20.000                Max.   :43.20   Max.   :27.200    
+##  NA&#39;s   :52                    NA&#39;s   :52      NA&#39;s   :52        
+##  GroupContribution      Rank            id       
+##  Min.   : 0.00     Min.   :1.00   Min.   : 1.00  
+##  1st Qu.: 3.00     1st Qu.:1.75   1st Qu.:24.75  
+##  Median :10.00     Median :2.50   Median :48.50  
+##  Mean   :13.87     Mean   :2.50   Mean   :48.50  
+##  3rd Qu.:20.00     3rd Qu.:3.25   3rd Qu.:72.25  
+##  Max.   :68.00     Max.   :4.00   Max.   :96.00  
+##  NA&#39;s   :52        NA&#39;s   :484</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Shows the name of each column in the data frame
+names(data)</code></pre>
+<pre><code>##  [1] &quot;Date&quot;               &quot;Session&quot;            &quot;Subject.ID&quot;        
+##  [4] &quot;Group&quot;              &quot;Scenario1&quot;          &quot;Scenario2&quot;         
+##  [7] &quot;Scenario3&quot;          &quot;Scenario4&quot;          &quot;Scenario5&quot;         
+## [10] &quot;Scenario6&quot;          &quot;Scenario7&quot;          &quot;Scenario8&quot;         
+## [13] &quot;Treatment&quot;          &quot;Gender&quot;             &quot;Age&quot;               
+## [16] &quot;Religion&quot;           &quot;Residence&quot;          &quot;Profit&quot;            
+## [19] &quot;FinancialStatus&quot;    &quot;ID&quot;                 &quot;Group_ID&quot;          
+## [22] &quot;Period&quot;             &quot;Contribution&quot;       &quot;ReceivePride&quot;      
+## [25] &quot;SubTotal&quot;           &quot;ProfitGroupAccount&quot; &quot;GroupContribution&quot; 
+## [28] &quot;Rank&quot;               &quot;id&quot;</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="univariate-analysis" class="section level1">
+<h1>Univariate Analysis</h1>
+<div style="margin-bottom:30px;">
+
+</div>
+<div id="age-continuous" class="section level2">
+<h2>Age (continuous)</h2>
+<pre class="r"><code># Summary stats
+summary(data$Age)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   18.00   21.00   21.00   21.27   22.00   26.00</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Histogram
+ggplot(data, aes(x=Age)) +
+  geom_histogram(color=&quot;darkblue&quot;, fill=&quot;lightblue&quot;, alpha=0.5,binwidth=1)+
+  labs(title=&quot;Histogram for Age&quot;, x=&quot;Age&quot;, y=&quot;Count&quot;)+
+  theme_classic()</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Histogram with density plot
+ggplot(data, aes(x=Age)) + 
+ geom_histogram(aes(y=..density..), binwidth=1,
+                colour=&quot;black&quot;, fill=&quot;white&quot;)+
+ geom_density(alpha=.2, fill=&quot;#FF6666&quot;) +
+  labs(title=&quot;Histogram with Density Curve for Age&quot;, x=&quot;Age&quot;, y=&quot;Percent&quot;)+
+  scale_y_continuous(limits=c(0,1), labels = scales::percent)+
+  theme_classic()</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Q-Q  plot
+
+qqnorm(data$Age, pch = 1, frame = FALSE)
+qqline(data$Age, col = &quot;steelblue&quot;, lwd = 2)</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Single boxplot
+ggplot(data, aes(x=Age))+
+  geom_boxplot(outlier.colour=&quot;red&quot;, fill=&quot;grey&quot;, outlier.shape=16,
+             outlier.size=2)+
+  coord_flip()+ 
+  theme_classic()</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="gender-nominal" class="section level2">
+<h2>Gender (nominal)</h2>
+<pre class="r"><code># Frequency table (method 1)
+
+GenderFrequency &lt;- table(data$Gender)
+GenderFrequency</code></pre>
+<pre><code>## 
+## Female   Male 
+##    740    220</code></pre>
+<pre class="r"><code>GenderProp &lt;- prop.table(GenderFrequency)
+GenderProp</code></pre>
+<pre><code>## 
+##    Female      Male 
+## 0.7708333 0.2291667</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Frequency table using piping (method 2)
+Genderdata &lt;- data %&gt;%
+  group_by(Gender) %&gt;%
+  summarise(Freq = n()) %&gt;%
+  mutate(Prop = Freq/sum(Freq))
+
+Genderdata</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   Gender  Freq  Prop
+##   &lt;fct&gt;  &lt;int&gt; &lt;dbl&gt;
+## 1 Female   740 0.771
+## 2 Male     220 0.229</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Bar chart for frequencies
+ggplot(data, aes(x = Gender)) +
+  geom_bar(color=&quot;red&quot;, fill=&quot;darkblue&quot;, alpha=0.7)+
+  theme_bw() + 
+  labs(title=&quot;Bar Chart for Gender&quot;, x=&quot;Gender&quot;, y=&quot;Frequency&quot;)</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Bar chart for percentage
+ggplot(data, aes(x = Gender)) +  
+        geom_bar(aes(y = (..count..)/sum(..count..)), color=&quot;darkblue&quot;, fill=&quot;red&quot;, alpha=0.7)+
+  labs(title=&quot;Bar Chart for Gender&quot;, x=&quot;Gender&quot;, y=&quot;Proportion&quot;)+
+  scale_y_continuous(limits=c(0,1), labels = scales::percent)+
+  theme_light()</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Pie chart
+
+pie(Genderdata$Freq, labels=levels(Genderdata$Gender), main = &quot;Gender&quot;, col= c(&quot;pink&quot;, &quot;blue&quot;))</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+</div>
+<div id="bivariate-analysis" class="section level1">
+<h1>Bivariate Analysis</h1>
+<div style="margin-bottom:50px;">
+
+</div>
+<div id="age-and-contribution" class="section level2">
+<h2>Age and Contribution</h2>
+<pre class="r"><code># Get mean contribution of each subject across all periods
+
+Cont_Subj &lt;- data %&gt;%
+  group_by(ID) %&gt;%
+  summarise(AverageCont = mean(Contribution, na.rm=TRUE))
+
+Age_Subj &lt;- data %&gt;%
+  select(ID, Age)
+
+Age_Cont &lt;- left_join(Cont_Subj, Age_Subj)</code></pre>
+<pre><code>## Joining, by = &quot;ID&quot;</code></pre>
+<pre class="r"><code>Age_Cont &lt;- unique(Age_Cont)</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Scatter plot for age and contribution
+ggplot(Age_Cont, aes(x=Age, y=AverageCont)) +
+  geom_point(size=2, shape=23) +
+  geom_smooth(method=lm, se=FALSE)+
+  labs(title=&quot;Age vs Average Contribution&quot;, x=&quot;Age&quot;, y=&quot;Average Contribution&quot;)+
+  theme_bw()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Correlation Coefficient
+cor(Age_Cont$Age, Age_Cont$AverageCont)</code></pre>
+<pre><code>## [1] 0.0873407</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="gender-and-financial-status" class="section level2">
+<h2>Gender and Financial Status</h2>
+<pre class="r"><code># Frequency &amp; proportion table
+
+Gender_FS &lt;- data %&gt;%
+  group_by(Gender, FinancialStatus) %&gt;%
+  summarise(Frequency = n()) %&gt;%
+  mutate(Proportion = Frequency/sum(Frequency))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;Gender&#39;. You can override using the `.groups` argument.</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Contingency table
+Gender_FS_C &lt;- data %&gt;% 
+  group_by(Gender, FinancialStatus) %&gt;%
+  summarise(Frequency = n()) %&gt;%
+  spread(FinancialStatus, Frequency)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;Gender&#39;. You can override using the `.groups` argument.</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Stacked bar plot
+ggplot(data, aes(x=Gender, y=..count.., fill=FinancialStatus)) +
+  geom_bar(position = &quot;stack&quot;)+
+  scale_fill_manual(values=c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;))+
+  geom_text(aes(label = ..count..), stat = &quot;count&quot;, position = position_stack(vjust = 0.5))+
+  theme_bw()</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Grouped bar plot
+ggplot(data, aes(x=FinancialStatus, y=..count../sum(..count..), fill=Gender)) +
+  geom_bar(position = &quot;dodge&quot;)+
+  scale_fill_manual(values=c(&quot;violet&quot;, &quot;peru&quot;))+
+  geom_text(aes(label = round((..count../sum(..count..)),2)), stat = &quot;count&quot;,position=position_dodge(width=0.9), vjust=-0.25)+
+  labs(x=&quot;Financial Status&quot;, y=&quot;Proportion&quot;)+
+  theme_bw()</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="gender-and-average-contribution" class="section level2">
+<h2>Gender and Average Contribution</h2>
+<pre class="r"><code># Frequency tables
+Cont_Subj &lt;- data %&gt;%
+  group_by(ID) %&gt;%
+  summarise(AverageCont = mean(Contribution, na.rm=TRUE))
+
+Gender_Subj &lt;- data %&gt;%
+  select(ID, Gender)
+
+Gender_Cont &lt;- left_join(Gender_Subj, Cont_Subj)</code></pre>
+<pre><code>## Joining, by = &quot;ID&quot;</code></pre>
+<pre class="r"><code>Gender_Cont &lt;- unique(Gender_Cont)
+ 
+
+Gender_Con_Tab &lt;- Gender_Cont %&gt;%
+  group_by(Gender) %&gt;%
+  summarise(Min=min(AverageCont, na.rm=T), Max=max(AverageCont, na.rm=T), Average=mean(AverageCont, na.rm=T),
+            Median=median(AverageCont, na.rm=T), StandardDev = sd(AverageCont, na.rm=T))</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Density plot
+ggplot(Gender_Cont, aes(x=AverageCont, color= Gender,fill=Gender)) +
+  geom_density(alpha=0.2)+
+   geom_histogram(aes(y=..density..), alpha=0.5, 
+                position=&quot;identity&quot;) +
+  geom_vline(data=Gender_Con_Tab, aes(xintercept=Average, color=Gender),
+             linetype=&quot;dashed&quot;)+
+  labs(x=&quot;Average Contribution&quot;, y=&quot;Density&quot;)+
+  scale_color_brewer(palette=&quot;Dark2&quot;) + 
+  theme_minimal()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Use facets
+ggplot(Gender_Cont, aes(x=AverageCont, color= Gender,fill=Gender)) +
+  geom_density(alpha=0.2)+
+   geom_histogram(aes(y=..density..), alpha=0.5, 
+                position=&quot;identity&quot;) +
+  geom_vline(data=Gender_Con_Tab, aes(xintercept=Average, color=Gender),
+             linetype=&quot;dashed&quot;)+
+  labs(x=&quot;Average Contribution&quot;, y=&quot;Density&quot;)+
+  scale_color_brewer(palette=&quot;Dark2&quot;) + 
+  theme_minimal()+
+    facet_wrap(~Gender)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Boxplot
+
+ggplot(Gender_Cont, aes(x=Gender, y= AverageCont)) +
+  geom_boxplot()+
+  stat_summary(data= Gender_Cont, mapping = aes(group = Gender),fun=mean, color =&quot;darkred&quot;, geom=&quot;point&quot;, shape=4, size=1, show.legend = FALSE) +
+  stat_summary(data= Gender_Cont, fun=mean, colour=&quot;darkred&quot;, geom=&quot;text&quot;, show.legend = FALSE,vjust=-0.7, hjust =0.25,aes(group= Gender, label=round(..y.., digits=1)), size = 3) +
+  labs(x=&quot;Gender&quot;, y=&quot;Contribution&quot;)+
+  theme_bw()</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># ---- You will need this helper function --- #
+summarySE &lt;- function(data=NULL, measurevar, groupvars=NULL, na.rm=TRUE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA&#39;s: if na.rm==T, don&#39;t count them
+  length2 &lt;- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group&#39;s data frame, return a vector with
+  # N, mean, and sd
+  datac &lt;- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm),
+                     median   = median     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the &quot;mean&quot; column    
+  datac &lt;- rename(datac, c(&quot;mean&quot; = measurevar))
+  
+  datac$se &lt;- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult &lt;- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci &lt;- datac$se * ciMult
+  
+  return(datac)
+}</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Use the helper function to automatically get the se and ci for each group
+
+ForFig &lt;- summarySE(Gender_Cont, measurevar=&quot;AverageCont&quot;, 
+                    groupvars= c( &quot;Gender&quot;))</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Mean with error bars
+ggplot(ForFig, aes(x= Gender , y=AverageCont), show.legend= F)+
+  stat_summary(fun.y=mean, aes(group=Gender, colour=Gender), geom=&quot;point&quot;, size=2) +
+  geom_errorbar(aes(ymin=AverageCont-se, ymax=AverageCont+se, group = Gender, color=Gender), width=0.1, size=1) +
+  scale_x_discrete(name=&quot;&quot;, expand=c(0.1,0.5))+
+  scale_y_continuous(name = &quot;Average Contribution (points)&quot;, expand=c(0,0), limits=c(0,6), 
+                     breaks=seq(0,5,1)) +
+  theme_bw() +
+  theme (panel.grid.minor = element_blank(),legend.position=&quot;&quot;, 
+         axis.text.x = element_text(size = 14), axis.ticks.length = unit(3, &quot;pt&quot;),
+         axis.text.y = element_text(size = 14),
+         axis.title.x = element_text(face=&quot;bold.italic&quot;, size=12),
+         axis.title.y = element_text(face=&quot;bold.italic&quot;, size=12)) +
+  scale_colour_brewer(palette=&quot;Dark2&quot;, name=&quot;&quot;) +
+  scale_shape_discrete(name=&quot;&quot;) </code></pre>
+<pre><code>## Warning: `fun.y` is deprecated. Use `fun` instead.</code></pre>
+<p><img src="descriptives_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Mean with confidence intervals is an excellent way to determine if there is a sign diff or not
+ggplot(ForFig, aes(x= Gender , y=AverageCont), show.legend= F)+
+  stat_summary(fun.y=mean, aes(group=Gender, colour=Gender), geom=&quot;point&quot;, size=2) +
+  geom_errorbar(aes(ymin=AverageCont-ci, ymax=AverageCont+ci, group = Gender, color=Gender), width=0.1, size=1) +
+  scale_x_discrete(name=&quot;&quot;, expand=c(0.1,0.5))+
+  scale_y_continuous(name = &quot;Average Contribution (points)&quot;, expand=c(0,0), limits=c(0,7), 
+                     breaks=seq(0,6,1)) +
+  theme_bw() +
+  theme (panel.grid.minor = element_blank(),legend.position=&quot;&quot;, 
+         axis.text.x = element_text(size = 14), axis.ticks.length = unit(3, &quot;pt&quot;),
+         axis.text.y = element_text(size = 14),
+         axis.title.x = element_text(face=&quot;bold.italic&quot;, size=12),
+         axis.title.y = element_text(face=&quot;bold.italic&quot;, size=12)) +
+  scale_colour_brewer(palette=&quot;Dark2&quot;, name=&quot;&quot;) +
+  scale_shape_discrete(name=&quot;&quot;) </code></pre>
+<pre><code>## Warning: `fun.y` is deprecated. Use `fun` instead.</code></pre>
+<img src="descriptives_files/figure-html/unnamed-chunk-32-1.png" width="672" />
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<p>These are some great resources to learn more about the capabilities of ggplot:</p>
+<ul>
+<li><a href="http://www.sthda.com/english/wiki/ggplot2-essentials">STHD</a></li>
+<li><a href="http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html">r-statistics.co</a></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
